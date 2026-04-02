@@ -31,13 +31,22 @@
     <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 px-4">
         <div class="container mx-auto text-center">
             <h1 class="text-5xl md:text-6xl font-bold mb-4" data-i18n="welcome_title">
-                 WELCOME TO CITYMENDERSA
+                🔧 WELCOME TO CITYMENDERSA
             </h1>
             <p class="text-xl md:text-2xl mb-2 font-light" data-i18n="tagline">
                 For the people by the people
             </p>
+            
+            <!-- Free Mode Badge with Offline Text -->
             <div class="inline-block bg-white/20 backdrop-blur px-6 py-2 rounded-full mt-4">
                 <span class="text-sm font-medium" data-i18n="free_mode">🆓 Free Mode</span>
+                <span class="ml-2 text-xs opacity-90">• No data, no problem 📴</span>
+            </div>
+            
+            <!-- Sync When Online Indicator -->
+            <div id="sync-indicator" class="mt-3 inline-flex items-center gap-2 text-xs opacity-90">
+                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse" id="sync-dot"></span>
+                <span id="sync-text">🔄 Sync when online</span>
             </div>
         </div>
     </header>
@@ -53,6 +62,7 @@
                 <form method="POST" action="{% url 'reporting:submit_report' %}" class="space-y-6">
                     {% csrf_token %}
                     
+                    
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_category">
                             Select Issue Category *
@@ -64,6 +74,7 @@
                             {% endfor %}
                         </select>
                     </div>
+                    
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -88,12 +99,14 @@
                         </div>
                     </div>
                     
+                    
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_address">
                             Enter Address Manually *
                         </label>
                         <textarea name="address_description" rows="3" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-3"></textarea>
                     </div>
+                    
                     
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_description">
@@ -102,8 +115,9 @@
                         <textarea name="description" rows="4" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-3"></textarea>
                     </div>
                     
+                    
                     <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 rounded-lg shadow-lg" data-i18n="submit_button">
-                         Submit Report
+                        Submit Report
                     </button>
                 </form>
             </div>
@@ -129,17 +143,14 @@
         </div>
     </footer>
 
-
+    
     <script>
+        
         const translations = {
             en: {
                 welcome_title: ' WELCOME TO CITYMENDERSA',
                 tagline: 'For the people by the people',
                 free_mode: ' Free Mode',
-                reported_issues: 'Reported Issues',
-                acknowledged: 'Acknowledged by Municipality',
-                pending_issues: 'Pending Issues',
-                resolved_issues: 'Resolved Issues',
                 report_title: 'What issues would you like to report?',
                 label_category: 'Select Issue Category *',
                 label_province: 'Select Province *',
@@ -152,10 +163,6 @@
                 welcome_title: ' SIYAKWAMUKELA KU-CITYMENDERSA',
                 tagline: 'Ngabantu ngabantu',
                 free_mode: ' Imodi Yamahhala',
-                reported_issues: 'Izinkinga Ezibikiwe',
-                acknowledged: 'Kuvunywe NguMasipala',
-                pending_issues: 'Izinkinga Ezilindile',
-                resolved_issues: 'Izinkinga Ezixazululiwe',
                 report_title: 'Yiziphi izinkinga ongathanda ukuzibika?',
                 label_category: 'Khetha Uhlobo Lwenkinga *',
                 label_province: 'Khetha Isifundazwe *',
@@ -168,26 +175,18 @@
                 welcome_title: ' SIYAKWAMKELA KU-CITYMENDERSA',
                 tagline: 'Ngabantu ngabantu',
                 free_mode: ' Indlela Yasimahla',
-                reported_issues: 'Ingxelo Ezibikiweyo',
-                acknowledged: 'Kuvunywe Ngumasipala',
-                pending_issues: 'Ingxelo Ezilindiweyo',
-                resolved_issues: 'Ingxelo Ezisombululiweyo',
                 report_title: 'Ziziphi iingxaki onqwenela ukuzibika?',
                 label_category: 'Khetha Udidi Lwengxaki *',
                 label_province: 'Khetha Iphondo *',
                 label_municipality: 'Khetha Umasipala *',
                 label_address: 'Faka Idilesi Ngesandla *',
                 label_description: 'Chaza Ingxaki *',
-                submit_button: ' Ngenisa Ingxelo'
+                submit_button: 'Ngenisa Ingxelo'
             },
             af: {
                 welcome_title: ' WELKOM BY CITYMENDERSA',
                 tagline: 'Vir die mense deur die mense',
                 free_mode: ' Gratis Modus',
-                reported_issues: 'Aangemelde Probleme',
-                acknowledged: 'Erken Deur Munisipaliteit',
-                pending_issues: 'Hangende Probleme',
-                resolved_issues: 'Opgeloste Probleme',
                 report_title: 'Watter probleme wil jy aanmeld?',
                 label_category: 'Kies Probleem Kategorie *',
                 label_province: 'Kies Provinsie *',
@@ -196,7 +195,6 @@
                 label_description: 'Beskryf Die Probleem *',
                 submit_button: ' Dien Verslag In'
             }
-            
         };
 
         function changeLanguage(langCode) {
@@ -212,41 +210,136 @@
             });
         }
 
+        
+        function showSuccessPopup(refNumber) {
+            const popup = document.createElement('div');
+            popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            popup.innerHTML = 
+                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+                    <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">✅ Report Submitted!</h2>
+                    <p class="text-gray-600 mb-4">Your issue has been received. Save your reference number to track progress.</p>
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-4">
+                        <p class="text-sm text-blue-600 font-semibold mb-1">Reference Number</p>
+                        <p class="text-2xl font-mono font-bold text-blue-800 select-all">${refNumber}</p>
+                    </div>
+                    <div class="space-y-3">
+                        <a href="/tracking/dashboard/" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg">
+                             View Dashboard
+                        </a>
+                        <button onclick="this.closest('.fixed').remove()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 rounded-lg">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            ;
+            document.body.appendChild(popup);
+        }
+
+        
+        function updateSyncIndicator() {
+            const syncDot = document.getElementById('sync-dot');
+            const syncText = document.getElementById('sync-text');
+            if (!syncDot || !syncText) return;
+            
+            if (navigator.onLine) {
+                syncDot.className = 'w-2 h-2 bg-green-400 rounded-full animate-pulse';
+                syncText.textContent = '🔄 Sync when online';
+            } else {
+                syncDot.className = 'w-2 h-2 bg-orange-400 rounded-full';
+                syncText.textContent = '📴 Offline - will sync when connected';
+            }
+        }
+
+        // ─────────────────────────────────────────────────────────────
+        // 🏙️ Province → Municipality Cascade (FIXED)
+        // ─────────────────────────────────────────────────────────────
+        function initProvinceMunicipalityCascade() {
+            const provinceSelect = document.getElementById('province-select');
+            const municipalitySelect = document.getElementById('municipality-select');
+            
+            
+            if (!provinceSelect || !municipalitySelect) {
+                console.error('Province or Municipality select not found');
+                return;
+            }
+            
+            provinceSelect.addEventListener('change', function() {
+                const provinceCode = this.value.trim();
+                
+                
+                municipalitySelect.innerHTML = '<option value="">-- Loading...</option>';
+                municipalitySelect.disabled = true;
+                
+                
+                if (!provinceCode) {
+                    municipalitySelect.innerHTML = '<option value="">-- Select Province First --</option>';
+                    return;
+                }
+                
+                
+                const apiUrl = "{% url 'reporting:get_municipalities' %}";
+                const fetchUrl = apiUrl + '?province_code=' + encodeURIComponent(provinceCode);
+                
+                
+                fetch(fetchUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP error: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        
+                        municipalitySelect.innerHTML = '<option value="">-- Select Municipality --</option>';
+                        
+                        
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(function(mun) {
+                                const option = document.createElement('option');
+                                option.value = mun.code || mun.pk;  // Support both 'code' and 'pk'
+                                option.textContent = mun.name;
+                                municipalitySelect.appendChild(option);
+                            });
+                            municipalitySelect.disabled = false;
+                        } else {
+                            municipalitySelect.innerHTML = '<option value="">No municipalities found</option>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading municipalities:', error);
+                        municipalitySelect.innerHTML = '<option value="">Error loading data</option>';
+                    });
+            });
+        }
+
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Language: Load saved preference
             const savedLang = localStorage.getItem('preferred_language');
             if (savedLang && translations[savedLang]) {
                 document.getElementById('language-selector').value = savedLang;
                 changeLanguage(savedLang);
             }
-        });
-    </script>
-
-    <script>
-    document.getElementById('province-select').addEventListener('change', function() {
-        const provinceCode = this.value;
-        const munSelect = document.getElementById('municipality-select');
-        
-        if (provinceCode) {
-            munSelect.disabled = true;
-            munSelect.innerHTML = '<option>Loading...</option>';
             
-            fetch("{% url 'reporting:get_municipalities' %}?province_code=" + provinceCode)
-                .then(response => response.json())
-                .then(data => {
-                    munSelect.innerHTML = '<option value="">-- Select Municipality --</option>';
-                    data.forEach(mun => {
-                        const option = document.createElement('option');
-                        option.value = mun.code;
-                        option.textContent = mun.name;
-                        munSelect.appendChild(option);
-                    });
-                    munSelect.disabled = false;
-                });
-        } else {
-            munSelect.disabled = true;
-            munSelect.innerHTML = '<option value="">-- Select Province First --</option>';
-        }
-    });
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('submitted') === 'true') {
+                showSuccessPopup(urlParams.get('ref'));
+            }
+            
+            
+            updateSyncIndicator();
+            window.addEventListener('online', updateSyncIndicator);
+            window.addEventListener('offline', updateSyncIndicator);
+            
+            
+            initProvinceMunicipalityCascade();
+        });
     </script>
 </body>
 </html>

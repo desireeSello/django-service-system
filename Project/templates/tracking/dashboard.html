@@ -8,9 +8,10 @@
 </head>
 <body class="bg-gray-50">
 
+    
     <header class="bg-white shadow-md py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-800">Reports Dashboard</h1>
+            <h1 class="text-2xl font-bold text-gray-800">📊 Reports Dashboard</h1>
             <a href="{% url 'reporting:homepage' %}" class="text-blue-600 hover:underline">
                 ← Back to Report Issue
             </a>
@@ -33,8 +34,8 @@
             </div>
             
             <!-- Pending -->
-            <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-yellow-500">
-                <div class="text-4xl font-bold text-yellow-600 mb-2">{{ pending_reports }}</div>
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-red-500">
+                <div class="text-4xl font-bold text-red-600 mb-2">{{ pending_reports }}</div>
                 <div class="text-sm text-gray-600 font-medium">Pending</div>
             </div>
             
@@ -46,7 +47,7 @@
         </div>
     </section>
 
-    
+   
     <section class="container mx-auto px-4 py-8 mb-12">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">
@@ -71,11 +72,17 @@
                             <td class="px-6 py-4 text-sm font-mono font-semibold text-blue-600">{{ report.reference_number }}</td>
                             <td class="px-6 py-4 text-sm text-gray-800">{{ report.category.name_en }}</td>
                             <td class="px-6 py-4">
-                                <span class="px-3 py-1 text-xs rounded-full 
-                                    {% if report.status == 'resolved' %}bg-green-100 text-green-800
-                                    {% elif report.status == 'in_progress' %}bg-yellow-100 text-yellow-800
-                                    {% elif report.status == 'acknowledged' %}bg-purple-100 text-purple-800
-                                    {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                <!--  UPDATED STATUS COLORS -->
+                                <span class="px-3 py-1 text-xs rounded-full font-medium border
+                                    {% if report.status == 'resolved' %}
+                                        bg-green-100 text-green-800 border-green-200
+                                    {% elif report.status == 'acknowledged' %}
+                                        bg-yellow-100 text-yellow-800 border-yellow-200
+                                    {% elif report.status == 'in_progress' %}
+                                        bg-orange-100 text-orange-800 border-orange-200
+                                    {% else %}
+                                        bg-red-100 text-red-800 border-red-200
+                                    {% endif %}">
                                     {{ report.get_status_display }}
                                 </span>
                             </td>
@@ -100,7 +107,7 @@
         </div>
     </section>
 
-    
+    <!--  GO BACK TO HOMEPAGE BUTTON (Bottom Right) -->
     <a href="{% url 'reporting:homepage' %}" 
        class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-full shadow-lg transition transform hover:scale-105 z-40 flex items-center gap-2">
         <span></span>
