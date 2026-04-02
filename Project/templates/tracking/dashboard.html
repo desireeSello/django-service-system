@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CityMenderSA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+    <header class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">Reports Dashboard</h1>
+            <a href="{% url 'reporting:homepage' %}" class="text-blue-600 hover:underline">
+                ← Back to Report Issue
+            </a>
+        </div>
+    </header>
+
+   
+    <section class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Total Reports -->
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-blue-500">
+                <div class="text-4xl font-bold text-blue-600 mb-2">{{ total_reports }}</div>
+                <div class="text-sm text-gray-600 font-medium">Total Reports</div>
+            </div>
+            
+            <!-- Acknowledged -->
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-purple-500">
+                <div class="text-4xl font-bold text-purple-600 mb-2">{{ acknowledged_reports }}</div>
+                <div class="text-sm text-gray-600 font-medium">Acknowledged</div>
+            </div>
+            
+            <!-- Pending -->
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-yellow-500">
+                <div class="text-4xl font-bold text-yellow-600 mb-2">{{ pending_reports }}</div>
+                <div class="text-sm text-gray-600 font-medium">Pending</div>
+            </div>
+            
+            <!-- Resolved -->
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center border-l-4 border-green-500">
+                <div class="text-4xl font-bold text-green-600 mb-2">{{ resolved_reports }}</div>
+                <div class="text-sm text-gray-600 font-medium">Resolved</div>
+            </div>
+        </div>
+    </section>
+
+    
+    <section class="container mx-auto px-4 py-8 mb-12">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">
+                 Recently Reported Issues
+            </h2>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Date Reported</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Reference Number</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Category</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for report in active_list %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 text-sm text-gray-600">{{ report.created_at|date:"d M Y" }}</td>
+                            <td class="px-6 py-4 text-sm font-mono font-semibold text-blue-600">{{ report.reference_number }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-800">{{ report.category.name_en }}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 text-xs rounded-full 
+                                    {% if report.status == 'resolved' %}bg-green-100 text-green-800
+                                    {% elif report.status == 'in_progress' %}bg-yellow-100 text-yellow-800
+                                    {% elif report.status == 'acknowledged' %}bg-purple-100 text-purple-800
+                                    {% else %}bg-blue-100 text-blue-800{% endif %}">
+                                    {{ report.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                <a href="{% url 'tracking:report_detail' report.reference_number %}" 
+                                   class="text-blue-600 hover:underline font-medium">
+                                    Track →
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                <div class="text-4xl mb-2">📭</div>
+                                <p>No issues reported yet. Be the first!</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    
+    <a href="{% url 'reporting:homepage' %}" 
+       class="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-full shadow-lg transition transform hover:scale-105 z-40 flex items-center gap-2">
+        <span></span>
+        <span>Go Back to Homepage</span>
+    </a>
+
+    
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm">
+                © 2026 CityMenderSA - For the People by the People
+            </p>
+            <p class="text-xs text-gray-400 mt-2">
+                All rights reserved. POPIA Compliant.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

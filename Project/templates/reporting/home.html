@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-language="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityMenderSA - For the People by the People</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+    
+    <div class="fixed top-4 right-4 z-50">
+        <select id="language-selector" 
+                class="border-2 border-white rounded-lg px-4 py-2 bg-white/90 shadow-lg"
+                onchange="changeLanguage(this.value)">
+            <option value="en">🇬 English</option>
+            <option value="zu">🇿 isiZulu</option>
+            <option value="xh">🇿🇦 isiXhosa</option>
+            <option value="af">🇿🇦 Afrikaans</option>
+            <option value="ses">🇿🇦 Sesotho</option>
+            <option value="set">🇿🇦 Setswana</option>
+            <option value="ss">🇿🇦 siSwati</option>
+            <option value="ve">🇿🇦 Tshivenda</option>
+            <option value="ts">🇿🇦 Xitsonga</option>
+            <option value="nde">🇿🇦 isiNdebele</option>
+            <option value="sep">🇿🇦 Sepedi</option>
+        </select>
+    </div>
+
+    
+    <header class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16 px-4">
+        <div class="container mx-auto text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4" data-i18n="welcome_title">
+                 WELCOME TO CITYMENDERSA
+            </h1>
+            <p class="text-xl md:text-2xl mb-2 font-light" data-i18n="tagline">
+                For the people by the people
+            </p>
+            <div class="inline-block bg-white/20 backdrop-blur px-6 py-2 rounded-full mt-4">
+                <span class="text-sm font-medium" data-i18n="free_mode">🆓 Free Mode</span>
+            </div>
+        </div>
+    </header>
+
+    
+    <section class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center" data-i18n="report_title">
+                    What issues would you like to report?
+                </h2>
+                
+                <form method="POST" action="{% url 'reporting:submit_report' %}" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_category">
+                            Select Issue Category *
+                        </label>
+                        <select name="category" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-3">
+                            <option value="">-- Select Category --</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name_en }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_province">
+                                Select Province *
+                            </label>
+                            <select id="province-select" name="province" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-3">
+                                <option value="">-- Select Province --</option>
+                                {% for province in provinces %}
+                                <option value="{{ province.code }}">{{ province.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_municipality">
+                                Select Municipality *
+                            </label>
+                            <select id="municipality-select" name="municipality" required disabled class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 disabled:bg-gray-100">
+                                <option value="">-- Select Province First --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_address">
+                            Enter Address Manually *
+                        </label>
+                        <textarea name="address_description" rows="3" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-3"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2" data-i18n="label_description">
+                            Describe the Issue *
+                        </label>
+                        <textarea name="description" rows="4" required class="w-full border-2 border-gray-300 rounded-lg px-4 py-3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 rounded-lg shadow-lg" data-i18n="submit_button">
+                         Submit Report
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    
+    <a href="{% url 'tracking:dashboard' %}" 
+       class="fixed bottom-6 right-6 bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-full shadow-lg transition transform hover:scale-105 z-40 flex items-center gap-2">
+        <span></span>
+        <span>View Dashboard</span>
+    </a>
+
+    
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm" data-i18n="footer_text">
+                © 2026 CityMenderSA - For the People by the People
+            </p>
+            <p class="text-xs text-gray-400 mt-2" data-i18n="footer_rights">
+                All rights reserved. POPIA Compliant.
+            </p>
+        </div>
+    </footer>
+
+
+    <script>
+        const translations = {
+            en: {
+                welcome_title: ' WELCOME TO CITYMENDERSA',
+                tagline: 'For the people by the people',
+                free_mode: ' Free Mode',
+                reported_issues: 'Reported Issues',
+                acknowledged: 'Acknowledged by Municipality',
+                pending_issues: 'Pending Issues',
+                resolved_issues: 'Resolved Issues',
+                report_title: 'What issues would you like to report?',
+                label_category: 'Select Issue Category *',
+                label_province: 'Select Province *',
+                label_municipality: 'Select Municipality *',
+                label_address: 'Enter Address Manually *',
+                label_description: 'Describe the Issue *',
+                submit_button: ' Submit Report'
+            },
+            zu: {
+                welcome_title: ' SIYAKWAMUKELA KU-CITYMENDERSA',
+                tagline: 'Ngabantu ngabantu',
+                free_mode: ' Imodi Yamahhala',
+                reported_issues: 'Izinkinga Ezibikiwe',
+                acknowledged: 'Kuvunywe NguMasipala',
+                pending_issues: 'Izinkinga Ezilindile',
+                resolved_issues: 'Izinkinga Ezixazululiwe',
+                report_title: 'Yiziphi izinkinga ongathanda ukuzibika?',
+                label_category: 'Khetha Uhlobo Lwenkinga *',
+                label_province: 'Khetha Isifundazwe *',
+                label_municipality: 'Khetha Umasipala *',
+                label_address: 'Faka Ikheli Ngesandla *',
+                label_description: 'Chaza Inkinga *',
+                submit_button: ' Hambisa Umbiko'
+            },
+            xh: {
+                welcome_title: ' SIYAKWAMKELA KU-CITYMENDERSA',
+                tagline: 'Ngabantu ngabantu',
+                free_mode: ' Indlela Yasimahla',
+                reported_issues: 'Ingxelo Ezibikiweyo',
+                acknowledged: 'Kuvunywe Ngumasipala',
+                pending_issues: 'Ingxelo Ezilindiweyo',
+                resolved_issues: 'Ingxelo Ezisombululiweyo',
+                report_title: 'Ziziphi iingxaki onqwenela ukuzibika?',
+                label_category: 'Khetha Udidi Lwengxaki *',
+                label_province: 'Khetha Iphondo *',
+                label_municipality: 'Khetha Umasipala *',
+                label_address: 'Faka Idilesi Ngesandla *',
+                label_description: 'Chaza Ingxaki *',
+                submit_button: ' Ngenisa Ingxelo'
+            },
+            af: {
+                welcome_title: ' WELKOM BY CITYMENDERSA',
+                tagline: 'Vir die mense deur die mense',
+                free_mode: ' Gratis Modus',
+                reported_issues: 'Aangemelde Probleme',
+                acknowledged: 'Erken Deur Munisipaliteit',
+                pending_issues: 'Hangende Probleme',
+                resolved_issues: 'Opgeloste Probleme',
+                report_title: 'Watter probleme wil jy aanmeld?',
+                label_category: 'Kies Probleem Kategorie *',
+                label_province: 'Kies Provinsie *',
+                label_municipality: 'Kies Munisipaliteit *',
+                label_address: 'Voer Adres Handmatig In *',
+                label_description: 'Beskryf Die Probleem *',
+                submit_button: ' Dien Verslag In'
+            }
+            
+        };
+
+        function changeLanguage(langCode) {
+            document.documentElement.lang = langCode;
+            document.documentElement.setAttribute('data-language', langCode);
+            localStorage.setItem('preferred_language', langCode);
+            
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[langCode] && translations[langCode][key]) {
+                    element.textContent = translations[langCode][key];
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLang = localStorage.getItem('preferred_language');
+            if (savedLang && translations[savedLang]) {
+                document.getElementById('language-selector').value = savedLang;
+                changeLanguage(savedLang);
+            }
+        });
+    </script>
+
+    <script>
+    document.getElementById('province-select').addEventListener('change', function() {
+        const provinceCode = this.value;
+        const munSelect = document.getElementById('municipality-select');
+        
+        if (provinceCode) {
+            munSelect.disabled = true;
+            munSelect.innerHTML = '<option>Loading...</option>';
+            
+            fetch("{% url 'reporting:get_municipalities' %}?province_code=" + provinceCode)
+                .then(response => response.json())
+                .then(data => {
+                    munSelect.innerHTML = '<option value="">-- Select Municipality --</option>';
+                    data.forEach(mun => {
+                        const option = document.createElement('option');
+                        option.value = mun.code;
+                        option.textContent = mun.name;
+                        munSelect.appendChild(option);
+                    });
+                    munSelect.disabled = false;
+                });
+        } else {
+            munSelect.disabled = true;
+            munSelect.innerHTML = '<option value="">-- Select Province First --</option>';
+        }
+    });
+    </script>
+</body>
+</html>
